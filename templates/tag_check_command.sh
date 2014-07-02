@@ -1,0 +1,1 @@
+aws --region <%= @ec2_region %> ec2 describe-tags --filters "Name=resource-id,Values=<%= @ec2_instance_id %>" | grep "<%= @tagname %>"

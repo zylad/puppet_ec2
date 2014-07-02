@@ -1,0 +1,1 @@
+aws --region <%= @ec2_region %> ec2 create-tags --resources <%= @ec2_instance_id %> --tags Key=<%= @tagname %>,Value=<%= @ensure %>
