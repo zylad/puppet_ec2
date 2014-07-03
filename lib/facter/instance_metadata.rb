@@ -1,50 +1,40 @@
 ## Retrieves basic instance information from the metadata service.
-require 'json'
+require 'net/http'
 
-Facter.add("ec2_ami") do
-  setcode do
-    Facter::Util::Resolution.exec("curl -sL http://169.254.169.254/latest/meta-data/ami-id")
-  end
-end
 
-Facter.add("ec2_instance_id") do
-  setcode do
-    Facter::Util::Resolution.exec("curl -sL http://169.254.169.254/latest/meta-data/instance-id")
-  end
-end
+Facter.add('ec2_ami_id') {
+  setcode { Net::HTTP.get('169.254.169.254', 'latest/meta-data/ami-id') }
+}
 
-Facter.add("ec2_az") do
-  setcode do
-    Facter::Util::Resolution.exec("curl -sL http://169.254.169.254/latest/meta-data/placement/availability-zone")
-  end
-end
+Facter.add('ec2_instance_id') {
+  setcode { Net::HTTP.get('169.254.169.254', 'latest/meta-data/instance-id') }
+}
 
-Facter.add("ec2_region") do
-  setcode do
-    Facter::Util::Resolution.exec("curl -sL http://169.254.169.254/latest/meta-data/placement/availability-zone").chop
-  end
-end
+Facter.add('ec2_az') {
+  setcode { Net::HTTP.get('169.254.169.254', 'latest/meta-data/placement/availability-zone') }
+}
 
-Facter.add("ec2_instance_type") do
-  setcode do
-    Facter::Util::Resolution.exec("curl -sL http://169.254.169.254/latest/meta-data/instance-type")
-  end
-end
+Facter.add('ec2_region') {
+  setcode { Facter.value('ec2_az').chop }
+}
 
-Facter.add("ec2_public_ip") do
-  setcode do
-    Facter::Util::Resolution.exec("curl -sL http://169.254.169.254/latest/meta-data/public-ipv4")
-  end
-end
+Facter.add('ec2_instance_type') {
+  setcode { Net::HTTP.get('169.254.169.254', 'latest/meta-data/instance-type') }
+}
 
-region = Facter.value('ec2_region')
+Facter.add('ec2_public_ip') {
+  setcode { Net::HTTP.get('169.254.169.254', 'latest/meta-data/public-ipv4') }
+}
+
+
+## This section will pull the VPC ID this instance is in.
+require 'aws-sdk'
+
+region      = Facter.value('ec2_region')
 instance_id = Facter.value('ec2_instance_id')
 
-instance_data_output = Facter::Util::Resolution.exec("aws ec2 describe-instances --region #{region} --filters 'Name=instance-id,Values=#{instance_id}'")
-instance_data = JSON.parse(instance_data_output)
+AWS.config(region: region)
 
-Facter.add("ec2_vpc_id") do
-  setcode do
-    instance_data["Reservations"][0]["Instances"][0]["VpcId"]
-  end
-end
+Facter.add('ec2_vpc_id') {
+  setcode { AWS.ec2.instances[instance_id].vpc_id }
+}
