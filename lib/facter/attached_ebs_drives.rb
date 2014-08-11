@@ -1,7 +1,7 @@
 ## Gathers information about the EBS drives attached to this instance.
 require 'aws-sdk'
 
-region            = Facter.value('ec2_region')
+region            = 'us-west-2'
 instance_id       = Facter.value('ec2_instance_id')
 
 ebs_drive_data    = {}
@@ -13,10 +13,13 @@ AWS.config(region: region)
 resp = AWS.ec2.client.describe_volumes(filters: [{name: 'attachment.instance-id', values: [instance_id]}])
 
 resp.data()[:volume_set].each { |vol|
+  puts vol
+
+  volume_id         = vol[:volume_id]
   attachment        = vol[:attachment_set][0]
   drive             = {}
 
-  total_volumes << vol[:volume_id]
+  total_volumes << volume_id
 
   drive['size_gb'] = vol[:size]
 
@@ -27,7 +30,7 @@ resp.data()[:volume_set].each { |vol|
   ## Determine what kind of EBS drive this is.
   drive['type'] = vol[:volume_type]
 
-  if vol['VolumeType'] == 'io1' then
+  if drive['type'] == 'io1' then
     drive['iops'] = vol[:iops]
   end
 
@@ -37,7 +40,7 @@ resp.data()[:volume_set].each { |vol|
   if drive['mount_point'] == '/dev/xvda1' then
     drive['is_root_device'] = true
   else
-    non_root_volumes << clean_drive_name
+    non_root_volumes << volume_id
   end
 
   drive['delete_on_termination'] = attachment[:delete_on_termination]
@@ -49,7 +52,7 @@ resp.data()[:volume_set].each { |vol|
   }
 
   drive['tags'] = volume_tags
-  ebs_drive_data[vol[:volume_id]] = drive
+  ebs_drive_data[volume_id] = drive
 }
 
 Facter.add("ec2_ebs_drive_data") {
