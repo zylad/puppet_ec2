@@ -54,6 +54,16 @@ resp.data()[:volume_set].each { |vol|
   Facter.add("ec2_ebs_#{clean_drive_name}_delete_on_termination") {
     setcode { attachment[:delete_on_termination] }
   }
+
+  ## Iterate through the tags and create a better data representation.
+  volume_tags = {}
+  vol[:tag_set].each { |tag|
+    volume_tags[tag[:key]] = tag[:value]
+  }
+
+  Facter.add("ec2_ebs_#{clean_drive_name}_tags") {
+    setcode { volume_tags }
+  }
 }
 
 Facter.add("ec2_ebs_volumes") {
