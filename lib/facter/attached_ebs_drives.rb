@@ -13,8 +13,6 @@ AWS.config(region: region)
 resp = AWS.ec2.client.describe_volumes(filters: [{name: 'attachment.instance-id', values: [instance_id]}])
 
 resp.data()[:volume_set].each { |vol|
-  puts vol
-
   volume_id         = vol[:volume_id]
   attachment        = vol[:attachment_set][0]
   drive             = {}
