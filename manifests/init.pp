@@ -10,8 +10,4 @@
 ##   Nothing; this is merely an anchor to include for Facter support.
 ##
 ## Requires: nothing
-class ec2 {
-
-
-
-}
+class ec2 { }

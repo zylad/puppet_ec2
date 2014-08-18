@@ -1,12 +1,12 @@
 {
-  "name": "silversupreme-puppet_ec2",
-  "version": "0.1.0",
-  "author": "silversupreme",
-  "summary": "Manages EC2 tags of running instance.",
-  "license": "Apache 2.0",
-  "source": "https://github.com/silversupreme/puppet_ec2.git",
+  "name":         "silversupreme-puppet_ec2",
+  "version":      "0.1.0",
+  "author":       "silversupreme",
+  "summary":      "Better EC2 facts for Puppet agents, providing tags and VPC support.",
+  "license":      "BSD",
+  "source":       "https://github.com/silversupreme/puppet_ec2.git",
   "project_page": "https://github.com/silversupreme/puppet_ec2",
-  "issues_url": "https://github.com/silversupreme/puppet_ec2/issues",
+  "issues_url":   "https://github.com/silversupreme/puppet_ec2/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
