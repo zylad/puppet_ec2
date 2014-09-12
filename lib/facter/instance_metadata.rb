@@ -1,6 +1,6 @@
 ## Retrieves basic instance information from the metadata service.
 require 'net/http'
-
+require 'aws-sdk'
 
 Facter.add('ec2_ami_id') {
   setcode { Net::HTTP.get('169.254.169.254', 'latest/meta-data/ami-id') }
@@ -28,13 +28,12 @@ Facter.add('ec2_public_ip') {
 
 
 ## This section will pull the VPC ID this instance is in.
-require 'aws-sdk'
-
-region      = Facter.value('ec2_region')
-instance_id = Facter.value('ec2_instance_id')
-
-AWS.config(region: region)
-
 Facter.add('ec2_vpc_id') {
-  setcode { AWS.ec2.instances[instance_id].vpc_id }
+  setcode {
+    region      = Facter.value('ec2_region')
+    instance_id = Facter.value('ec2_instance_id')
+
+    AWS.config(region: region)
+    AWS.ec2.instances[instance_id].vpc_id
+  }
 }
