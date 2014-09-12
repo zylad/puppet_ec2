@@ -1,7 +1,7 @@
 ## Gathers information about the EBS drives attached to this instance.
 require 'aws-sdk'
 
-region            = 'us-west-2'
+region            = Facter.value('ec2_region')
 instance_id       = Facter.value('ec2_instance_id')
 
 ebs_drive_data    = {}
