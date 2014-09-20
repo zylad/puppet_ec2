@@ -35,6 +35,6 @@ Facter.add('ec2_mac') {
 Facter.add('ec2_vpc_id') {
   setcode {
     mac = Facter.value('ec2_mac')
-    Net::HTTP.get('169.254.169.254', "network/interfaces/macs/#{mac}/vpc-id")
+    Net::HTTP.get('169.254.169.254', "latest/meta-data/network/interfaces/macs/#{mac}/vpc-id")
   }
 }
