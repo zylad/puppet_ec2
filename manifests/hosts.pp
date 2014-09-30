@@ -9,9 +9,9 @@ class ec2::hosts {
     content => template('ec2/fetch-hosts.sh'),
   }
 
-  cron { 'fetch_ec2_hosts': 
+  cron { 'fetch_ec2_hosts':
     ensure  => present,
-    command => '/usr/local/bin/fetch-hosts',
+    command => '/usr/local/bin/fetch-hosts >/dev/null 2>&1',
     user    => root,
     minute  => '*/5',
   }
